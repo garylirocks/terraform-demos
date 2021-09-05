@@ -5,6 +5,13 @@ terraform {
       version = "2.75.0"
     }
   }
+
+  backend "azurerm" {
+    resource_group_name  = "learning-rg"
+    storage_account_name = "tfstatey2hkc"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
 }
 
 provider "azurerm" {
