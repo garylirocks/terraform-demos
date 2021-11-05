@@ -1,14 +1,14 @@
 terraform {
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
       version = "2.75.0"
     }
   }
 
   backend "azurerm" {
     resource_group_name  = "learning-rg"
-    storage_account_name = "tfstatey2hkc"
+    storage_account_name = "tfstatemg7te"
     container_name       = "tfstate"
     key                  = "terraform.tfstate"
   }
