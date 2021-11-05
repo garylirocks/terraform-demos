@@ -8,6 +8,14 @@ terraform {
   }
 
   required_version = ">= 0.14.9"
+
+  backend "remote" {
+    organization = "garylirocks"
+
+    workspaces {
+      name = "learning"
+    }
+  }
 }
 
 provider "azurerm" {
