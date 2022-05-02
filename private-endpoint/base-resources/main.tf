@@ -1,16 +1,3 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "> 3.0.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
 locals {
   location = "Australia East"
 }
@@ -47,30 +34,4 @@ resource "azurerm_key_vault" "temp" {
   tenant_id                   = data.azurerm_client_config.current.tenant_id
   purge_protection_enabled    = false
   sku_name                    = "standard"
-}
-
-// the private DNS zone to add DNS record to
-resource "azurerm_private_dns_zone" "temp" {
-  name                = "privatelink.vaultcore.azure.net"
-  resource_group_name = azurerm_resource_group.temp.name
-}
-
-resource "azurerm_private_endpoint" "temp" {
-  name                = "pe-temp-001"
-  location            = azurerm_resource_group.temp.location
-  resource_group_name = azurerm_resource_group.temp.name
-  subnet_id           = azurerm_subnet.endpoint.id
-
-  private_service_connection {
-    name                           = "temp-privateserviceconnection"
-    private_connection_resource_id = azurerm_key_vault.temp.id
-    is_manual_connection           = false
-    subresource_names              = ["vault"]
-  }
-
-  // create privatae dns zone group
-  private_dns_zone_group {
-    name                 = "default"
-    private_dns_zone_ids = [azurerm_private_dns_zone.temp.id]
-  }
 }
