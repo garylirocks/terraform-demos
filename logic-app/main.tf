@@ -12,17 +12,24 @@ provider "azurerm" {
 }
 
 locals {
-  location        = "Australia East"
-  connection_name = "azureblob-001"
-}
-
-resource "azurerm_resource_group" "temp" {
-  name     = "rg-temp-001"
-  location = local.location
+  location             = "Australia East"
+  connection_name      = "azureblob-001"
+  resource_group_name  = "rg-temp-001"
+  storage_account_name = "stgarytemp001"
 }
 
 data "azurerm_managed_api" "example" {
   name     = "azureblob"
+  location = local.location
+}
+
+data "azurerm_storage_account" "example" {
+  name                = local.storage_account_name
+  resource_group_name = local.resource_group_name
+}
+
+resource "azurerm_resource_group" "temp" {
+  name     = local.resource_group_name
   location = local.location
 }
 
@@ -34,8 +41,8 @@ resource "azurerm_api_connection" "example" {
   display_name        = "Blob Connection 001"
 
   parameter_values = {
-    accountName = "stgarytemp001"
-    accessKey   = var.access_key
+    accountName = local.storage_account_name
+    accessKey   = data.azurerm_storage_account.example.primary_access_key
   }
 
   lifecycle {
@@ -44,6 +51,7 @@ resource "azurerm_api_connection" "example" {
   }
 }
 
+# the Logic app
 resource "azurerm_logic_app_workflow" "example" {
   name                = "logic-temp-001"
   location            = azurerm_resource_group.temp.location
