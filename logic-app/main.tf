@@ -14,7 +14,7 @@ provider "azurerm" {
 locals {
   location             = "Australia East"
   connection_name      = "azureblob-001"
-  resource_group_name  = "rg-temp-001"
+  resource_group_name  = "rg-logicapp-001"
   storage_account_name = "stgarytemp001"
 }
 
@@ -23,14 +23,17 @@ data "azurerm_managed_api" "example" {
   location = local.location
 }
 
-data "azurerm_storage_account" "example" {
-  name                = local.storage_account_name
-  resource_group_name = local.resource_group_name
-}
-
 resource "azurerm_resource_group" "temp" {
   name     = local.resource_group_name
   location = local.location
+}
+
+resource "azurerm_storage_account" "example" {
+  name                     = local.storage_account_name
+  resource_group_name      = azurerm_resource_group.temp.name
+  location                 = local.location
+  account_replication_type = "LRS"
+  account_tier             = "Standard"
 }
 
 # an API connection to a storage account
@@ -42,7 +45,7 @@ resource "azurerm_api_connection" "example" {
 
   parameter_values = {
     accountName = local.storage_account_name
-    accessKey   = data.azurerm_storage_account.example.primary_access_key
+    accessKey   = azurerm_storage_account.example.primary_access_key
   }
 
   lifecycle {
