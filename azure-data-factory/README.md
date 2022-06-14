@@ -6,7 +6,10 @@ Then use ARM template for sub-resources deployment, as recommended here: https:/
 
 Configs:
 
-1. dev ADF is connected to the ADF repo
+1. dev ADF is connected to the ADF repo's main branch (config in Terraform)
+2. Do whatever you need in ADF in browser, ADF updates the connected branch automatically
+
+
 
 
 
