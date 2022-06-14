@@ -80,4 +80,9 @@ resource "azurerm_logic_app_workflow" "example" {
       }
     )
   }
+
+  lifecycle {
+    # NOTE: ignore changes
+    ignore_changes = [parameters, workflow_parameters]
+  }
 }
