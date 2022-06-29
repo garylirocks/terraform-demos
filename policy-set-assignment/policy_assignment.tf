@@ -9,3 +9,22 @@ resource "azurerm_management_group_policy_assignment" "example" {
     }
 VALUE
 }
+
+resource "azurerm_management_group_policy_assignment" "tagging" {
+  name                 = "gary_assignment_tagging"
+  policy_definition_id = azurerm_policy_set_definition.tagging.id
+  management_group_id  = azurerm_management_group.level1.id
+
+  // required for a "modify" policy
+  identity {
+    type = "SystemAssigned"
+  }
+  location = "australiaeast"
+
+  parameters = <<VALUE
+    {
+      "tagName_set": {"value": "env"},
+      "tagValue_set": {"value": "testing"}
+    }
+VALUE
+}
