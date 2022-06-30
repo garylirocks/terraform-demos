@@ -32,6 +32,10 @@ data "azurerm_policy_definition" "add_tag_subscription" {
   display_name = "Add a tag to subscriptions"
 }
 
+data "azurerm_policy_definition" "require_tag_resource" {
+  display_name = "Require a tag on resources"
+}
+
 resource "azurerm_policy_set_definition" "tagging" {
   name                = "garyTestPolicySet_tagging"
   policy_type         = "Custom"
@@ -63,6 +67,16 @@ PARAMETERS
     {
       "tagName": {"value": "[parameters('tagName_set')]"},
       "tagValue": {"value": "[parameters('tagValue_set')]"}
+    }
+VALUE
+  }
+
+  policy_definition_reference {
+    policy_definition_id = data.azurerm_policy_definition.require_tag_resource.id
+    reference_id         = "require_tag_resource"
+    parameter_values     = <<VALUE
+    {
+      "tagName": {"value": "[parameters('tagName_set')]"}
     }
 VALUE
   }

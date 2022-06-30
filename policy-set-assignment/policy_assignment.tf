@@ -12,6 +12,7 @@ VALUE
 
 resource "azurerm_management_group_policy_assignment" "tagging" {
   name                 = "gary_assignment_tagging"
+  display_name         = "Gary Assignment Tagging"
   policy_definition_id = azurerm_policy_set_definition.tagging.id
   management_group_id  = azurerm_management_group.level1.id
 
