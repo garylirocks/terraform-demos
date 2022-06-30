@@ -1,33 +1,14 @@
 resource "azurerm_policy_set_definition" "example" {
-  name                = "garyTestPolicySet"
+  name                = "garyTestPolicySet-${filemd5("./gary_test_policyset.params.json")}"
   policy_type         = "Custom"
   display_name        = "Gary Test Policy Set"
   management_group_id = azurerm_management_group.level1.id
 
-  parameters = <<PARAMETERS
-    {
-      "allowedLocations_set": {
-          "type": "Array",
-          "defaultValue": [ "australiaeast" ],
-          "metadata": {
-              "description": "The list of allowed locations for resources.",
-              "displayName": "Allowed locations",
-              "strongType": "location"
-          }
-      },
-      "allowedLocationsForSet": {
-          "type": "Array",
-          "metadata": {
-              "description": "The list of allowed locations for resources.",
-              "displayName": "Allowed locations",
-              "strongType": "location"
-          }
-      }
-    }
-PARAMETERS
+  parameters = file("./gary_test_policyset.params.json")
 
   policy_definition_reference {
     policy_definition_id = azurerm_policy_definition.policy.id
+    reference_id         = "test-policy"
     parameter_values     = <<VALUE
     {
       "allowedLocations": {"value": "[parameters('allowedLocations_set')]"}
