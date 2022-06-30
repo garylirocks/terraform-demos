@@ -6,6 +6,15 @@ resource "azurerm_policy_set_definition" "example" {
 
   parameters = <<PARAMETERS
     {
+      "allowedLocations_set": {
+          "type": "Array",
+          "defaultValue": [ "australiaeast" ],
+          "metadata": {
+              "description": "The list of allowed locations for resources.",
+              "displayName": "Allowed locations",
+              "strongType": "location"
+          }
+      },
       "allowedLocationsForSet": {
           "type": "Array",
           "metadata": {
@@ -21,7 +30,7 @@ PARAMETERS
     policy_definition_id = azurerm_policy_definition.policy.id
     parameter_values     = <<VALUE
     {
-      "allowedLocations": {"value": "[parameters('allowedLocationsForSet')]"}
+      "allowedLocations": {"value": "[parameters('allowedLocations_set')]"}
     }
 VALUE
   }
@@ -61,15 +70,15 @@ resource "azurerm_policy_set_definition" "tagging" {
     }
 PARAMETERS
 
-  policy_definition_reference {
-    policy_definition_id = data.azurerm_policy_definition.add_tag_subscription.id
-    parameter_values     = <<VALUE
-    {
-      "tagName": {"value": "[parameters('tagName_set')]"},
-      "tagValue": {"value": "[parameters('tagValue_set')]"}
-    }
-VALUE
-  }
+  #   policy_definition_reference {
+  #     policy_definition_id = data.azurerm_policy_definition.add_tag_subscription.id
+  #     parameter_values     = <<VALUE
+  #     {
+  #       "tagName": {"value": "[parameters('tagName_set')]"},
+  #       "tagValue": {"value": "[parameters('tagValue_set')]"}
+  #     }
+  # VALUE
+  #   }
 
   policy_definition_reference {
     policy_definition_id = data.azurerm_policy_definition.require_tag_resource.id

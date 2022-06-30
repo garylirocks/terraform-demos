@@ -29,6 +29,7 @@ POLICY_RULE
   {
     "allowedLocations": {
       "type": "Array",
+      "defaultValue": [ "australiaeast" ],
       "metadata": {
         "description": "The list of allowed locations for resources.",
         "displayName": "Allowed locations",

@@ -5,6 +5,7 @@ resource "azurerm_management_group_policy_assignment" "example" {
 
   parameters = <<VALUE
     {
+      "allowedLocations_set": {"value": ["australiaeast"]},
       "allowedLocationsForSet": {"value": ["australiaeast"]}
     }
 VALUE
