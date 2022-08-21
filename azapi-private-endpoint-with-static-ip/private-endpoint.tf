@@ -44,12 +44,19 @@ resource "azapi_resource" "private_endpoint" {
   })
 }
 
-# This does not work for Private DNS Zone Group
-# Seems an issue with Azure API
-# see: https://github.com/pulumi/pulumi-azure-nextgen/issues/227
+/*
+This does not work for Private DNS Zone Group
+Seems an issue with Azure REST API
+
+  az rest --method get --url "/subscriptions/<sub-id>/resourceGroups/rg-temp-001/providers/Microsoft.Network/privateEndpoints/pe-vault-temp-001/privateDnsZoneGroups/nonExistGroup?api-version=2022-01-01" --debug
+
+This returns "200", while usually for a non exist resource, it should be "404"
+
+Also see: https://github.com/pulumi/pulumi-azure-nextgen/issues/227
+*/
 # resource "azapi_resource" "private_dns_zone_group" {
 #   type      = "Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2022-01-01"
-#   name      = "garyDnsZoneGroup"
+#   name      = "default"
 #   parent_id = azapi_resource.private_endpoint.id
 #   body = jsonencode({
 #     properties = {
