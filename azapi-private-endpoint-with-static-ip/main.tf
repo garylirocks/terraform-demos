@@ -5,7 +5,7 @@ locals {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "temp" {
-  name     = "rg-temp-001"
+  name     = "rg-pe-test-001"
   location = local.location
 }
 

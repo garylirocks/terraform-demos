@@ -32,14 +32,6 @@ resource "azapi_resource" "private_endpoint" {
         }
       ]
       customNetworkInterfaceName = "nic-staticip"
-      customDnsConfigs = [
-        {
-          fqdn = "kv-temp-gary-001.vault.azure.net",
-          ipAddresses = [
-            "10.0.2.8"
-          ]
-        }
-      ]
     }
   })
 }
