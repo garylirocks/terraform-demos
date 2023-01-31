@@ -5,8 +5,8 @@ resource "azurerm_virtual_network" "vnet-hub" {
   address_space       = ["10.0.0.0/16"]
 }
 
-resource "azurerm_subnet" "subnet-hub-dns" {
-  name                 = "subnet-pep"
+resource "azurerm_subnet" "subnet-default" {
+  name                 = "subnet-default"
   resource_group_name  = azurerm_resource_group.example.name
   virtual_network_name = azurerm_virtual_network.vnet-hub.name
   address_prefixes     = ["10.0.0.0/24"]

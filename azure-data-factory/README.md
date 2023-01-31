@@ -1,40 +1,22 @@
 # Azure Data Factory
 
-Create two ADF, one as dev, one as prod.
+Create an ADF to test integration runtimes
 
-Then use ARM template for sub-resources deployment, as recommended here: https://docs.microsoft.com/en-us/azure/data-factory/continuous-integration-delivery-improvements
+Related resources for testing:
 
-Configs:
-
-1. dev ADF is connected to the ADF repo's main branch (config in Terraform)
-2. Do whatever you need in ADF in browser, ADF updates the connected branch automatically
+- Storage account: to test copying data
+- Windows VM: to install integration runtime
 
 
+## Manual steps
+
+1. Go to ADF, add an self-hosted IR, download and install the IR software on the VM
+2. Create linked services (to the blob storage) for testing
 
 
+## Purpose
 
+This could be used to test:
 
-Use workspace to manage the two envs:
-
-Create workspaces:
-
-```sh
-tf workspace new dev
-tf workspace new prod
-```
-
-Work in "dev"
-
-```sh
-tf workspace select dev
-# ...
-tf apply -var-file dev.tfvars
-```
-
-Work in "prod"
-
-```sh
-tf workspace select prod
-# ...
-tf apply -var-file prod.tfvars
-```
+1. IR access to storage account
+2. Which IR is used in a copy activity

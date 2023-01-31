@@ -18,9 +18,10 @@ resource "azurerm_resource_group" "example" {
 
 
 resource "azurerm_data_factory" "example" {
-  name                = "adf-${var.env}-demo-001"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  name                            = "adf-${var.env}-demo-001"
+  location                        = azurerm_resource_group.example.location
+  resource_group_name             = azurerm_resource_group.example.name
+  managed_virtual_network_enabled = true
 
   identity {
     type = "SystemAssigned"
