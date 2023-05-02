@@ -42,9 +42,31 @@ resource "azurerm_linux_virtual_machine" "demo" {
   }
 
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "7-LVM"
     version   = "latest"
   }
+}
+
+resource "azurerm_virtual_machine_extension" "oms" {
+  name                       = "OmsAgentForLinux"
+  virtual_machine_id         = azurerm_linux_virtual_machine.demo.id
+  publisher                  = "Microsoft.EnterpriseCloud.Monitoring"
+  type                       = "OmsAgentForLinux"
+  type_handler_version       = "1.14"
+  auto_upgrade_minor_version = true # install the latest minor version
+  automatic_upgrade_enabled  = true
+
+  settings = <<SETTINGS
+    {
+      "workspaceId": "${azurerm_log_analytics_workspace.demo.workspace_id}"
+    }
+  SETTINGS
+
+  protected_settings = <<SETTINGS
+    {
+      "workspaceKey": "${azurerm_log_analytics_workspace.demo.primary_shared_key}"
+    }
+  SETTINGS
 }
