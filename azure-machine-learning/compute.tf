@@ -3,6 +3,7 @@ resource "random_string" "ci_prefix" {
   length  = 8
   upper   = false
   special = false
+  numeric = false # compute instance name cannot start with a number
 }
 
 # Compute instance
