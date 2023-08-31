@@ -7,8 +7,12 @@ Create a testing resource group to try out various Azure services, features
   - a private DNS zone, linked to the vnet, auto-registration enabled
   - a storage account
   - a log analytics workspace
-  - Log analytics agent VM extension connected to the workspace
-
+  - AMA related resources
+    - User assigned managed identity
+    - AMA extension on the VM using the MI
+    - DCR (destination is the log analytics workspace)
+    - DCR association to the VM
+  - (commented out) Log analytics agent VM extension connected to the workspace
 
 
 To find available VM images:

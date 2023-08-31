@@ -47,26 +47,54 @@ resource "azurerm_linux_virtual_machine" "demo" {
     sku       = "7-LVM"
     version   = "latest"
   }
+
+  identity {
+    type = "UserAssigned"
+    identity_ids = [
+      azurerm_user_assigned_identity.demo.id
+    ]
+  }
 }
 
-resource "azurerm_virtual_machine_extension" "oms" {
-  name                       = "OmsAgentForLinux"
+resource "azurerm_virtual_machine_extension" "ama" {
   virtual_machine_id         = azurerm_linux_virtual_machine.demo.id
-  publisher                  = "Microsoft.EnterpriseCloud.Monitoring"
-  type                       = "OmsAgentForLinux"
-  type_handler_version       = "1.14"
+  publisher                  = "Microsoft.Azure.Monitor"
+  type                       = "AzureMonitorLinuxAgent"
+  name                       = "AzureMonitorLinuxAgent"
+  type_handler_version       = "1.27"
   auto_upgrade_minor_version = true # install the latest minor version
   automatic_upgrade_enabled  = true
 
   settings = <<SETTINGS
     {
-      "workspaceId": "${azurerm_log_analytics_workspace.demo.workspace_id}"
-    }
-  SETTINGS
-
-  protected_settings = <<SETTINGS
-    {
-      "workspaceKey": "${azurerm_log_analytics_workspace.demo.primary_shared_key}"
+      "authentication": {
+        "managedIdentity": {
+          "identifier-name": "mi_res_id",
+          "identifier-value": "${azurerm_user_assigned_identity.demo.id}"
+        }
+      }
     }
   SETTINGS
 }
+
+# resource "azurerm_virtual_machine_extension" "oms" {
+#   name                       = "OmsAgentForLinux"
+#   virtual_machine_id         = azurerm_linux_virtual_machine.demo.id
+#   publisher                  = "Microsoft.EnterpriseCloud.Monitoring"
+#   type                       = "OmsAgentForLinux"
+#   type_handler_version       = "1.14"
+#   auto_upgrade_minor_version = true # install the latest minor version
+#   automatic_upgrade_enabled  = true
+
+#   settings = <<SETTINGS
+#     {
+#       "workspaceId": "${azurerm_log_analytics_workspace.demo.workspace_id}"
+#     }
+#   SETTINGS
+
+#   protected_settings = <<SETTINGS
+#     {
+#       "workspaceKey": "${azurerm_log_analytics_workspace.demo.primary_shared_key}"
+#     }
+#   SETTINGS
+# }
