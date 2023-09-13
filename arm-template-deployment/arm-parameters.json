@@ -1,0 +1,11 @@
+{
+  "secretTagValue": {
+    "reference": {
+      "keyVault": {
+        "id": "/subscriptions/70256be7-d155-4702-8976-0e7f9a046876/resourceGroups/rg-kv-001/providers/Microsoft.KeyVault/vaults/kv-arm-deploy-001"
+      },
+      "secretName": "mySecret",
+      "secretVersion": "666bcc932ac64d67ac15776dd8f671d3"
+    }
+  }
+}
