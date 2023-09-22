@@ -4,7 +4,7 @@ resource "azurerm_firewall" "all" {
   name                = "afw-${each.key}-001"
   location            = azurerm_resource_group.all[each.key].location
   resource_group_name = azurerm_resource_group.all[each.key].name
-  sku_tier            = "Standard"
+  sku_tier            = "Basic"
   sku_name            = "AZFW_Hub"
   firewall_policy_id  = azurerm_firewall_policy.demo.id
 
