@@ -1,29 +1,37 @@
 data "azurerm_subscription" "primary" {}
 
-data "azurerm_client_config" "example" {}
 
 data "azurerm_role_definition" "example" {
   name = "Reader"
 }
 
+data "azuread_client_config" "current" {}
+
+data "azuread_users" "members" {
+  user_principal_names = ["chris@guisheng.li"]
+}
+
 resource "time_static" "example" {}
+
+resource "azuread_group" "example" {
+  display_name     = "PIM-role-assignment"
+  owners           = [data.azuread_client_config.current.object_id]
+  security_enabled = true
+  members          = data.azuread_users.members.object_ids
+}
+
 
 resource "azurerm_pim_eligible_role_assignment" "example" {
   scope              = data.azurerm_subscription.primary.id
   role_definition_id = "${data.azurerm_subscription.primary.id}${data.azurerm_role_definition.example.id}"
-  principal_id       = data.azurerm_client_config.example.object_id
+  principal_id       = azuread_group.example.object_id
 
   schedule {
     start_date_time = time_static.example.rfc3339
     expiration {
-      duration_hours = 8
+      duration_days = 180
     }
   }
 
-  justification = "Expiration Duration Set"
-
-  ticket {
-    number = "1"
-    system = "example ticket system"
-  }
+  justification = "Allow the group to access the Azure resource"
 }
