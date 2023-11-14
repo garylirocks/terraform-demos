@@ -11,6 +11,8 @@ To use a service principal to assign PIM roles for Azure resources, the service 
 - 'Group.ReadWrite.All' to create and manage AAD groups
 - 'User.Read.All' to read users
 
+**Cannot manage role management policies (role settings) via Terraform**
+
 
 ## Run
 
