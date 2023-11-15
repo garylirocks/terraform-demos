@@ -14,7 +14,8 @@ data "azuread_users" "members" {
 resource "time_static" "example" {}
 
 resource "azuread_group" "example" {
-  display_name     = "PIM-role-assignment"
+  display_name = "PIM-role-assignment"
+  // current identity will be used as owner by default, if owners field is omitted
   owners           = [data.azuread_client_config.current.object_id]
   security_enabled = true
   members          = data.azuread_users.members.object_ids
