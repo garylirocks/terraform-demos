@@ -20,6 +20,16 @@ resource "azurerm_key_vault" "demo" {
     ]
   }
 
+  // for the standard logic app SAMI
+  access_policy {
+    tenant_id = azurerm_logic_app_standard.demo.identity[0].tenant_id
+    object_id = azurerm_logic_app_standard.demo.identity[0].principal_id
+
+    secret_permissions = [
+      "Get",
+    ]
+  }
+
   // for current user
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
