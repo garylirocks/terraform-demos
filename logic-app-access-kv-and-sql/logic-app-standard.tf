@@ -1,15 +1,3 @@
-resource "random_id" "storage_account" {
-  byte_length = 5
-}
-
-resource "azurerm_storage_account" "demo" {
-  name                     = "st${random_id.storage_account.hex}"
-  resource_group_name      = azurerm_resource_group.demo.name
-  location                 = azurerm_resource_group.demo.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-}
-
 resource "azurerm_service_plan" "demo" {
   name                = "asp-demo-001"
   location            = azurerm_resource_group.demo.location

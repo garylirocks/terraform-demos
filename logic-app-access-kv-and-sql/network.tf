@@ -28,17 +28,18 @@ resource "azurerm_subnet" "logic-app-integration-001" {
   }
 }
 
-
 // the private DNS zone to add DNS record to
-resource "azurerm_private_dns_zone" "kv" {
-  name                = "privatelink.vaultcore.azure.net"
+resource "azurerm_private_dns_zone" "all" {
+  for_each            = local.private_endpoint_resources
+  name                = each.value.domain
   resource_group_name = azurerm_resource_group.demo.name
 }
 
-resource "azurerm_private_dns_zone_virtual_network_link" "kv" {
-  name                  = azurerm_private_dns_zone.kv.name
+resource "azurerm_private_dns_zone_virtual_network_link" "all" {
+  for_each              = local.private_endpoint_resources
+  name                  = "link-${azurerm_virtual_network.demo.name}"
   resource_group_name   = azurerm_resource_group.demo.name
-  private_dns_zone_name = azurerm_private_dns_zone.kv.name
+  private_dns_zone_name = azurerm_private_dns_zone.all[each.key].name
   virtual_network_id    = azurerm_virtual_network.demo.id
   registration_enabled  = false
 }

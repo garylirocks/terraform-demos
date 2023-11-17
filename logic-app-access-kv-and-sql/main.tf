@@ -5,10 +5,6 @@ locals {
   storage_account_name = "stgarytemp001"
 }
 
-resource "random_id" "kv" {
-  byte_length = 5
-}
-
 resource "azurerm_resource_group" "demo" {
   name     = local.resource_group_name
   location = local.location

@@ -1,5 +1,9 @@
 data "azurerm_client_config" "current" {}
 
+resource "random_id" "kv" {
+  byte_length = 5
+}
+
 // the resource what the endpoint points to
 resource "azurerm_key_vault" "demo" {
   name                        = "kv-${random_id.kv.hex}"
@@ -62,6 +66,6 @@ resource "azurerm_private_endpoint" "kv" {
 
   private_dns_zone_group {
     name                 = "default"
-    private_dns_zone_ids = [azurerm_private_dns_zone.kv.id]
+    private_dns_zone_ids = [azurerm_private_dns_zone.all["vault"].id]
   }
 }
