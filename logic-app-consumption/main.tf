@@ -28,14 +28,6 @@ resource "azurerm_resource_group" "temp" {
   location = local.location
 }
 
-resource "azurerm_storage_account" "example" {
-  name                     = local.storage_account_name
-  resource_group_name      = azurerm_resource_group.temp.name
-  location                 = local.location
-  account_replication_type = "LRS"
-  account_tier             = "Standard"
-}
-
 # an API connection to a storage account
 resource "azurerm_api_connection" "example" {
   name                = local.connection_name
