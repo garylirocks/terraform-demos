@@ -52,6 +52,10 @@ resource "azurerm_logic_app_workflow" "example" {
   location            = azurerm_resource_group.temp.location
   resource_group_name = azurerm_resource_group.temp.name
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   workflow_parameters = {
     "$connections" = jsonencode(
       {

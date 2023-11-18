@@ -8,9 +8,12 @@ Resources created
 
 - Resource group
 - Logic app (multi-tenant consumption plan)
+  - with System assigned managed identity
 - Storage account
   - with a container and blob for testing
 - API connection to the storage account
+  - using Access Key
+
 
 ## Manual steps
 
