@@ -1,1 +1,4 @@
-Using Terraform to create/destroy an Azure subscription ?
+Use Terraform to
+
+- Manage alias and tags of existing subscriptions
+- Create new subscriptions
