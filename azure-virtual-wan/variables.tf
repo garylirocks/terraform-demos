@@ -1,3 +1,8 @@
+variable "create_ause_vhub" {
+  description = "Should AUSE hub be created"
+  type        = bool
+}
+
 variable "create_firewall" {
   description = "Should a firewall be created in each vHub"
   type        = bool

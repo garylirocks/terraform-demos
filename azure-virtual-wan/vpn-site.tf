@@ -1,4 +1,4 @@
-module "vpn-site" {
+module "branch" {
   count  = var.create_vpn_site ? 1 : 0
   source = "./branch-vnet/"
 
@@ -15,14 +15,14 @@ resource "azurerm_vpn_site" "demo" {
 
   link {
     name          = "Link1"
-    ip_address    = module.vpn-site[0].bgp[0].peering_addresses[0].tunnel_ip_addresses[0]
+    ip_address    = module.branch[0].bgp[0].peering_addresses[0].tunnel_ip_addresses[0]
     provider_name = "Azure"
     speed_in_mbps = 50
 
     // TODO: should get values from module output
     bgp {
-      asn             = module.vpn-site[0].bgp[0].asn
-      peering_address = module.vpn-site[0].bgp[0].peering_addresses[0].default_addresses[0]
+      asn             = module.branch[0].bgp[0].asn
+      peering_address = module.branch[0].bgp[0].peering_addresses[0].default_addresses[0]
     }
   }
 }

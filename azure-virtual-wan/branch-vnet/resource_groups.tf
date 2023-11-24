@@ -1,5 +1,5 @@
 locals {
-  name = "vpnsite"
+  name = "branch"
 }
 
 resource "azurerm_resource_group" "demo" {
