@@ -21,7 +21,6 @@ resource "azurerm_network_interface" "all" {
 resource "azurerm_linux_virtual_machine" "all" {
   for_each            = local.regions
   name                = "vm-${each.key}-001"
-  depends_on          = [azurerm_key_vault.kv1]
   resource_group_name = azurerm_resource_group.all[each.key].name
   location            = azurerm_resource_group.all[each.key].location
   size                = local.vmsize
