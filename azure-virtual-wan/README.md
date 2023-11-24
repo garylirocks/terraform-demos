@@ -27,10 +27,12 @@ This lab deploys the following Resources:
 1. A Virtual Machine in each Azure Region (in the Regional vNets), to allow testing of Connectivity.
 1. (Optional) Firewall and firewall policy
   - Routing intent - next hop set to the Firewall
-1. (Optional) Another vnet to demo site-to-site VPN connection to vHub
+1. (Optional) A mock branch (vnet) to demo site-to-site VPN connection to vHub
   - VPN gateway
   - Bastion
   - Workload VM
+  - vWAN VPN site
+  - vHub VPN gateway
 1. (Optional) Log analytics workspace
    1. Diagnostic settings for vWan site-to-site VPN
    1. Diagnostic settings for vHub ?
