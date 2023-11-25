@@ -34,20 +34,23 @@ This lab deploys the following Resources:
   - vWAN VPN site
   - vHub VPN gateway
 1. (Optional) Log analytics workspace
-   1. Diagnostic settings for vWan site-to-site VPN
-   1. Diagnostic settings for vHub ?
+   1. Diagnostic settings for vHub VPN gateway
 
 
 ## Notes
 
-- Seems there is no setting to create a VPN gateway in a vHub, need to do this manually
 - Azure Firewall policy and Azure Firewall need to be of the same SKU
+- TODO: The VPN gateway connection is not successful, how to fix this ?
 
 
 ## Testing
 
-- Connectivity
+- VNet to VNet Connectivity
 
   - With firewall deployed
   - Login to AUE VM, you should be able to run `ping 10.2.1.4` successfully
   - After you change the firewall rule to "Deny", `ping` will fail
+
+- VPN Connection
+
+  - TODO
