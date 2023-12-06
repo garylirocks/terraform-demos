@@ -27,12 +27,13 @@ resource "azurerm_pim_eligible_role_assignment" "example" {
   role_definition_id = "${data.azurerm_subscription.primary.id}${data.azurerm_role_definition.example.id}"
   principal_id       = azuread_group.example.object_id
 
-  schedule {
-    start_date_time = time_static.example.rfc3339
-    expiration {
-      duration_days = 180
-    }
-  }
+  # When commented out, the assignment will be permanent
+  # schedule {
+  #   start_date_time = time_static.example.rfc3339
+  #   expiration {
+  #     duration_days = 180
+  #   }
+  # }
 
   justification = "Allow the group to access the Azure resource"
 }
