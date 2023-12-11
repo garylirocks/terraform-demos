@@ -8,13 +8,20 @@ terraform {
     }
   }
 
-  cloud {
-    organization = "garylirocks"
-
-    workspaces {
-      name = "pim-role-assignments"
-    }
+  backend "azurerm" {
+    resource_group_name  = "rg-common"
+    storage_account_name = "stterraformstatex001"
+    container_name       = "tfstate"
+    key                  = "pim_role_assignment.tfstate"
   }
+
+  # cloud {
+  #   organization = "garylirocks"
+
+  #   workspaces {
+  #     name = "pim-role-assignments"
+  #   }
+  # }
 }
 
 provider "azurerm" {
