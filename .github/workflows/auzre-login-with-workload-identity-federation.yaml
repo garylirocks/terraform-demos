@@ -1,0 +1,68 @@
+name: Run Terraform
+
+on:
+  push:
+    branches:
+      - autorun
+  workflow_dispatch:
+    inputs:
+      folder:
+        type: string
+        description: 'Relative path to the folder'
+        required: true
+
+jobs:
+  terraform:
+    defaults:
+      run:
+        working-directory: ${{ inputs.folder }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS_SP_PIM_ROLE_ASSIGNMENT }}
+        enable-AzPSSession: true
+
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az account show
+
+    - name: Azure PowerShell script
+      uses: azure/powershell@v1.2.0
+      with:
+        azPSVersion: "latest"
+        inlineScript: |
+          Get-AzContext
+          Get-AzResourceGroup
+
+    - name: Microsoft Graph PowerShell script
+      uses: azure/powershell@v1.2.0
+      with:
+        azPSVersion: "latest"
+        inlineScript: |
+          $accessToken = (Get-AzAccessToken -ResourceUrl "https://graph.microsoft.com").Token
+          $accessTokenSecure = ConvertTo-SecureString -String "$accessToken" -AsPlainText -Force
+
+          # login with the access token
+          Connect-MgGraph -AccessToken $accessTokenSecure
+          (Get-MgContext).scopes
+
+    # - name: 'Run Azure CLI commands'
+    #   run: |
+    #       az account show
+    #       az group list
+    #       pwd
+
+    # - uses: hashicorp/setup-terraform@v3
+
+    # - run: terraform init
+
+    # - id: plan
+    #   run: terraform plan -no-color
+
+    # - run: echo ${{ steps.plan.outputs.stdout }}
+    # - run: echo ${{ steps.plan.outputs.stderr }}
+    # - run: echo ${{ steps.plan.outputs.exitcode }}
