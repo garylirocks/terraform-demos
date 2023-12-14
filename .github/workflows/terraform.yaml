@@ -15,12 +15,12 @@ jobs:
   terraform:
     defaults:
       run:
-        working-directory: ${{ inputs.folder }}
+        working-directory: ${{ inputs.folder || 'terraform' }}
     runs-on: ubuntu-latest
     steps:
     - uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS_SP_PIM_ROLE_ASSIGNMENT }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true
 
     - name: Azure CLI script
