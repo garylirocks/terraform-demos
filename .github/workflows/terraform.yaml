@@ -38,19 +38,6 @@ jobs:
           Get-AzContext
           Get-AzResourceGroup
 
-    - name: Microsoft Graph PowerShell script
-      uses: azure/powershell@v1.2.0
-      with:
-        azPSVersion: "latest"
-        inlineScript: |
-          $accessToken = (Get-AzAccessToken -ResourceUrl "https://graph.microsoft.com").Token
-          $accessTokenSecure = ConvertTo-SecureString -String "$accessToken" -AsPlainText -Force
-
-          # login with the access token
-          Connect-MgGraph -AccessToken $accessTokenSecure
-          (Get-MgContext).scopes
-
-
     # - name: 'Run Azure CLI commands'
     #   run: |
     #       az account show
