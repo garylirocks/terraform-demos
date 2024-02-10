@@ -1,5 +1,13 @@
-resource "azurerm_public_ip" "lb" {
+resource "azurerm_public_ip" "lb_inbound" {
   name                = "pip-${local.name}"
+  resource_group_name = azurerm_resource_group.demo.name
+  location            = local.location
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_public_ip" "lb_outbound" {
+  name                = "pip-lb-demo-outbound-001"
   resource_group_name = azurerm_resource_group.demo.name
   location            = local.location
   allocation_method   = "Static"
@@ -13,8 +21,13 @@ resource "azurerm_lb" "demo" {
   sku                 = "Standard"
 
   frontend_ip_configuration {
-    name                 = "PublicIPAddress"
-    public_ip_address_id = azurerm_public_ip.lb.id
+    name                 = "PublicIPInbound"
+    public_ip_address_id = azurerm_public_ip.lb_inbound.id
+  }
+
+  frontend_ip_configuration {
+    name                 = "PublicIPOutbound"
+    public_ip_address_id = azurerm_public_ip.lb_outbound.id
   }
 }
 
@@ -43,7 +56,7 @@ resource "azurerm_lb_nat_rule" "vm" {
   frontend_port_start            = 22
   frontend_port_end              = 24
   backend_port                   = 22
-  frontend_ip_configuration_name = "PublicIPAddress"
+  frontend_ip_configuration_name = "PublicIPInbound"
   backend_address_pool_id        = azurerm_lb_backend_address_pool.demo.id
 }
 
@@ -59,7 +72,7 @@ resource "azurerm_lb_rule" "demo" {
   protocol                       = "Tcp"
   frontend_port                  = 80
   backend_port                   = 80
-  frontend_ip_configuration_name = "PublicIPAddress"
+  frontend_ip_configuration_name = "PublicIPInbound"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.demo.id]
   probe_id                       = azurerm_lb_probe.demo.id
   disable_outbound_snat          = true // NOTE: this is recommended, you need to create outbound rules explicitly
@@ -73,6 +86,6 @@ resource "azurerm_lb_outbound_rule" "demo" {
   allocated_outbound_ports = 64
 
   frontend_ip_configuration {
-    name = "PublicIPAddress"
+    name = "PublicIPOutbound"
   }
 }
