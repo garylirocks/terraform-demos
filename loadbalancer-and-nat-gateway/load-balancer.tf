@@ -1,5 +1,5 @@
 resource "azurerm_public_ip" "lb_inbound" {
-  name                = "pip-${local.name}"
+  name                = "pip-lb-inbound-000"
   resource_group_name = azurerm_resource_group.demo.name
   location            = local.location
   allocation_method   = "Static"
@@ -7,7 +7,7 @@ resource "azurerm_public_ip" "lb_inbound" {
 }
 
 resource "azurerm_public_ip" "lb_outbound" {
-  name                = "pip-lb-demo-outbound-001"
+  name                = "pip-lb-outbound-000"
   resource_group_name = azurerm_resource_group.demo.name
   location            = local.location
   allocation_method   = "Static"
@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "lb_outbound" {
 }
 
 resource "azurerm_lb" "demo" {
-  name                = "lbe-${local.name}"
+  name                = "lbe-demo-000"
   location            = local.location
   resource_group_name = azurerm_resource_group.demo.name
   sku                 = "Standard"
@@ -32,17 +32,19 @@ resource "azurerm_lb" "demo" {
 }
 
 resource "azurerm_lb_backend_address_pool" "demo" {
-  name            = "backendpool-001"
+  name            = "backendpool-000"
   loadbalancer_id = azurerm_lb.demo.id
 }
 
 # Add all IP configs on a NIC to this backend pool
 resource "azurerm_lb_backend_address_pool_address" "demo" {
-  count                   = length(azurerm_network_interface.demo["001"].ip_configuration)
-  name                    = "address-${count.index}"
+  for_each = merge([for nic_key, nic in azurerm_network_interface.demo : {
+    for ipconfig_key, ipconfig in nic.ip_configuration : "${nic_key}_${ipconfig_key}" => ipconfig
+  } if local.snets[nic_key].vm.lb == true]...)
+  name                    = "address-${each.key}"
   backend_address_pool_id = azurerm_lb_backend_address_pool.demo.id
-  virtual_network_id      = azurerm_virtual_network.demo["001"].id
-  ip_address              = azurerm_network_interface.demo["001"].ip_configuration[count.index].private_ip_address
+  virtual_network_id      = azurerm_virtual_network.demo["000"].id
+  ip_address              = each.value.private_ip_address
 }
 
 # NOTE: In the Portal, you could set either a backend pool or a single VM as target
@@ -54,7 +56,7 @@ resource "azurerm_lb_nat_rule" "vm" {
   protocol            = "Tcp"
   # frontend_port                  = 22
   frontend_port_start            = 22
-  frontend_port_end              = 24
+  frontend_port_end              = 25
   backend_port                   = 22
   frontend_ip_configuration_name = "PublicIPInbound"
   backend_address_pool_id        = azurerm_lb_backend_address_pool.demo.id

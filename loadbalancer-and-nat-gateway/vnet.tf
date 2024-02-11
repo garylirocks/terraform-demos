@@ -7,24 +7,21 @@ resource "azurerm_virtual_network" "demo" {
 }
 
 # resource "azurerm_subnet" "demo" {
-#   name                 = "snet-${local.name}"
-#   address_prefixes     = local.vnet.subnet_address_prefixes
-#   resource_group_name  = azurerm_resource_group.demo.name
-#   virtual_network_name = azurerm_virtual_network.demo.name
+#   ...
 # }
 
 ## NOTE
 ## "azurerm_subnet" resource does not support "defaultOutboundAccess" property yet
 ## so we use azapi to create this subnet
 resource "azapi_resource" "subnet" {
-  for_each  = local.vnets
+  for_each  = local.snets
   type      = "Microsoft.Network/virtualNetworks/subnets@2023-06-01"
-  name      = "snet-default"
-  parent_id = azurerm_virtual_network.demo[each.key].id
+  name      = "snet-${each.value.snet_key}"
+  parent_id = azurerm_virtual_network.demo[each.value.vnet_key].id
 
   body = jsonencode({
     properties = {
-      addressPrefixes       = each.value.subnet_address_prefixes
+      addressPrefixes       = each.value.address_space
       defaultOutboundAccess = false
     }
   })
@@ -61,7 +58,7 @@ resource "azurerm_network_security_group" "demo" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "demo" {
-  for_each                  = local.vnets
+  for_each                  = local.snets
   subnet_id                 = azapi_resource.subnet[each.key].id
   network_security_group_id = azurerm_network_security_group.demo.id
 }

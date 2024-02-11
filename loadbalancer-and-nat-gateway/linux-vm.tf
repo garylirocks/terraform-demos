@@ -1,27 +1,40 @@
+# Create public IPs
+resource "azurerm_public_ip" "nic" {
+  for_each            = { for k, v in local.snets : k => v if v.vm.public_ip == true }
+  name                = "pip-nic-${each.key}"
+  resource_group_name = azurerm_resource_group.demo.name
+  location            = local.location
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+# Create two IP configs per NIC for testing
+# Primary IP config may have public IP
 resource "azurerm_network_interface" "demo" {
-  for_each            = local.vnets
-  name                = "nic-${each.key}"
+  for_each            = local.snets
+  name                = "nic-${each.value.snet_key}"
   location            = local.location
   resource_group_name = azurerm_resource_group.demo.name
 
   ip_configuration {
-    name                          = "default"
+    name                          = "ipconfig-001"
+    primary                       = true
     subnet_id                     = azapi_resource.subnet[each.key].id
     private_ip_address_allocation = "Dynamic"
-    primary                       = true
+    public_ip_address_id          = try(azurerm_public_ip.nic[each.key].id, null)
   }
 
   ip_configuration {
-    name                          = "ipconfig-2"
+    name                          = "ipconfig-002"
+    primary                       = false
     subnet_id                     = azapi_resource.subnet[each.key].id
     private_ip_address_allocation = "Dynamic"
-    primary                       = false
   }
 }
 
 resource "azurerm_linux_virtual_machine" "demo" {
-  for_each            = local.vnets
-  name                = "vm-${each.key}"
+  for_each            = local.snets
+  name                = "vm-${each.value.snet_key}"
   resource_group_name = azurerm_resource_group.demo.name
   location            = local.location
   size                = "Standard_B1s"
