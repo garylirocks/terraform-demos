@@ -3,12 +3,14 @@ resource "random_id" "storage_account" {
 }
 
 resource "azurerm_storage_account" "demo" {
-  name                          = "st${random_id.storage_account.hex}"
-  resource_group_name           = azurerm_resource_group.demo.name
-  location                      = azurerm_resource_group.demo.location
-  account_tier                  = "Standard"
-  account_replication_type      = "LRS"
-  public_network_access_enabled = false
+  name                     = "st${random_id.storage_account.hex}"
+  resource_group_name      = azurerm_resource_group.demo.name
+  location                 = azurerm_resource_group.demo.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  # CAUTION: this needs to be true for creating the Standard Logic App
+  public_network_access_enabled = true
 }
 
 resource "azurerm_private_endpoint" "storage-services" {

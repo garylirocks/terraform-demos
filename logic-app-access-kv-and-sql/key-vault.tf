@@ -1,5 +1,3 @@
-data "azurerm_client_config" "current" {}
-
 resource "random_id" "kv" {
   byte_length = 5
 }
@@ -46,7 +44,7 @@ resource "azurerm_key_vault" "demo" {
 }
 
 resource "azurerm_key_vault_secret" "demo" {
-  name         = "secret-001"
+  name         = "secret-002"
   value        = "QuickFox"
   key_vault_id = azurerm_key_vault.demo.id
 }

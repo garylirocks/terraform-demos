@@ -1,3 +1,9 @@
+resource "random_string" "demo" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
 resource "azurerm_service_plan" "demo" {
   name                = "asp-demo-001"
   location            = azurerm_resource_group.demo.location
@@ -7,7 +13,7 @@ resource "azurerm_service_plan" "demo" {
 }
 
 resource "azurerm_logic_app_standard" "demo" {
-  name                       = "logic-standard-demo-001"
+  name                       = "logic-standard-demo-${random_string.demo.result}-001"
   location                   = azurerm_resource_group.demo.location
   resource_group_name        = azurerm_resource_group.demo.name
   app_service_plan_id        = azurerm_service_plan.demo.id

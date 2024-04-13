@@ -1,4 +1,9 @@
 locals {
+  location             = "Australia East"
+  connection_name      = "azureblob-001"
+  resource_group_name  = "rg-logicapp-001"
+  storage_account_name = "stgarytemp001"
+
   private_endpoint_resources = {
     "vault" = {
       domain = "privatelink.vaultcore.azure.net"
