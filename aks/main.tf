@@ -1,39 +1,26 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "3.87.0"
-    }
-  }
+locals {
+  location = "Australia East"
 }
 
-provider "azurerm" {
-  features {}
+resource "azurerm_resource_group" "demo" {
+  name     = "rg-aks-demo-001"
+  location = local.location
 }
 
-resource "azurerm_resource_group" "example" {
-  name     = "example-resources"
-  location = "West Europe"
-}
-
-resource "azurerm_kubernetes_cluster" "example" {
-  name                = "example-aks1"
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-  dns_prefix          = "exampleaks1"
+resource "azurerm_kubernetes_cluster" "demo" {
+  name                = "aks-demo-001"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.demo.name
+  dns_prefix          = "aks-demo-001"
+  sku_tier            = "Free"
 
   default_node_pool {
     name       = "default"
     node_count = 1
-    vm_size    = "Standard_D2_v2"
+    vm_size    = "Standard_B2s"
   }
 
   identity {
     type = "SystemAssigned"
-  }
-
-  tags = {
-    Environment = "Production"
-    customTag   = "customTagValue"
   }
 }
