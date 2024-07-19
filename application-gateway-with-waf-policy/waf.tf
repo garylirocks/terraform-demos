@@ -1,4 +1,4 @@
-resource "azurerm_web_application_firewall_policy" "example" {
+resource "azurerm_web_application_firewall_policy" "agw-global" {
   name                = "waf-${local.name}-001"
   resource_group_name = azurerm_resource_group.example.name
   location            = local.region
@@ -12,24 +12,39 @@ resource "azurerm_web_application_firewall_policy" "example" {
   }
 
   custom_rules {
-    action    = "Allow"
-    enabled   = true
-    name      = "allowGary"
-    priority  = 100
+    name      = "globalAllow"
+    priority  = 1
     rule_type = "MatchRule"
 
     match_conditions {
-      match_values = [
-        "bypass_owasp=1",
-      ]
-      negation_condition = false
-      operator           = "Contains"
-      transforms         = []
-
       match_variables {
         variable_name = "QueryString"
       }
+
+      operator           = "Contains"
+      negation_condition = false
+      match_values       = ["globalAllow"]
     }
+
+    action = "Allow"
+  }
+
+  custom_rules {
+    name      = "globalBlock"
+    priority  = 2
+    rule_type = "MatchRule"
+
+    match_conditions {
+      match_variables {
+        variable_name = "QueryString"
+      }
+
+      operator           = "Contains"
+      negation_condition = false
+      match_values       = ["globalBlock"]
+    }
+
+    action = "Block"
   }
 
   managed_rules {
@@ -62,5 +77,122 @@ resource "azurerm_web_application_firewall_policy" "example" {
         }
       }
     }
+  }
+}
+
+// per site WAF
+resource "azurerm_web_application_firewall_policy" "site" {
+  name                = "waf-${local.name}-site-001"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = local.region
+
+  policy_settings {
+    enabled                     = true
+    mode                        = "Prevention"
+    request_body_check          = true
+    file_upload_limit_in_mb     = 100
+    max_request_body_size_in_kb = 128
+  }
+
+  managed_rules {
+    managed_rule_set {
+      type    = "OWASP"
+      version = "3.2"
+    }
+  }
+
+  custom_rules {
+    name      = "siteAllow"
+    priority  = 1
+    rule_type = "MatchRule"
+
+    match_conditions {
+      match_variables {
+        variable_name = "QueryString"
+      }
+
+      operator           = "Contains"
+      negation_condition = false
+      match_values       = ["siteAllow"]
+    }
+
+    action = "Allow"
+  }
+
+  custom_rules {
+    name      = "siteBlock"
+    priority  = 20
+    rule_type = "MatchRule"
+
+    match_conditions {
+      match_variables {
+        variable_name = "QueryString"
+      }
+
+      operator           = "Contains"
+      negation_condition = false
+      match_values       = ["siteBlock"]
+    }
+
+    action = "Block"
+  }
+}
+
+
+// per URI WAF
+resource "azurerm_web_application_firewall_policy" "uri" {
+  name                = "waf-${local.name}-uri-001"
+  resource_group_name = azurerm_resource_group.example.name
+  location            = local.region
+
+  policy_settings {
+    enabled                     = true
+    mode                        = "Prevention"
+    request_body_check          = true
+    file_upload_limit_in_mb     = 100
+    max_request_body_size_in_kb = 128
+  }
+
+  managed_rules {
+    managed_rule_set {
+      type    = "OWASP"
+      version = "3.2"
+    }
+  }
+
+  custom_rules {
+    name      = "uriAllow"
+    priority  = 1
+    rule_type = "MatchRule"
+
+    match_conditions {
+      match_variables {
+        variable_name = "QueryString"
+      }
+
+      operator           = "Contains"
+      negation_condition = false
+      match_values       = ["uriAllow"]
+    }
+
+    action = "Allow"
+  }
+
+  custom_rules {
+    name      = "uriBlock"
+    priority  = 2
+    rule_type = "MatchRule"
+
+    match_conditions {
+      match_variables {
+        variable_name = "QueryString"
+      }
+
+      operator           = "Contains"
+      negation_condition = false
+      match_values       = ["uriBlock"]
+    }
+
+    action = "Block"
   }
 }

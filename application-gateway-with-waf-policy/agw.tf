@@ -7,7 +7,7 @@ resource "azurerm_application_gateway" "example" {
   fips_enabled        = false
 
   force_firewall_policy_association = true
-  firewall_policy_id                = resource.azurerm_web_application_firewall_policy.example.id
+  firewall_policy_id                = resource.azurerm_web_application_firewall_policy.agw-global.id
 
   sku {
     name = "WAF_v2"
@@ -15,14 +15,16 @@ resource "azurerm_application_gateway" "example" {
   }
 
   autoscale_configuration {
-    min_capacity = 2
-    max_capacity = 3
+    min_capacity = 1
+    max_capacity = 2
   }
 
   gateway_ip_configuration {
     name      = "gatewayipconfig"
     subnet_id = local.subnets["agw"].id
   }
+
+  // =========== Front end ===========
 
   frontend_ip_configuration {
     name                 = "frontendipconfig-public"
@@ -42,13 +44,26 @@ resource "azurerm_application_gateway" "example" {
   }
 
   http_listener {
-    name                           = "listener-001"
+    name                           = "listener-public-001"
     frontend_ip_configuration_name = "frontendipconfig-public"
     frontend_port_name             = "port1"
     host_names                     = []
     protocol                       = "Http"
     require_sni                    = false
+    firewall_policy_id             = resource.azurerm_web_application_firewall_policy.site.id
   }
+
+  http_listener {
+    name                           = "listener-private-001"
+    frontend_ip_configuration_name = "frontendipconfig-private"
+    frontend_port_name             = "port1"
+    host_names                     = []
+    protocol                       = "Http"
+    require_sni                    = false
+    firewall_policy_id             = resource.azurerm_web_application_firewall_policy.site.id
+  }
+
+  // =========== Back end ===========
 
   backend_address_pool {
     name         = "pool-app-service"
@@ -72,14 +87,45 @@ resource "azurerm_application_gateway" "example" {
     }
   }
 
+  // =========== Routing rules ===========
+
   request_routing_rule {
-    name                       = "rule-001"
-    rule_type                  = "Basic"
-    http_listener_name         = "listener-001"
+    name                       = "rule-public-001"
+    rule_type                  = "PathBasedRouting"
+    http_listener_name         = "listener-public-001"
     backend_address_pool_name  = "pool-app-service"
     backend_http_settings_name = "backendsetting-001"
     priority                   = 10
+    url_path_map_name          = "rule-public-001"
   }
+
+  request_routing_rule {
+    name                       = "rule-private-001"
+    rule_type                  = "Basic"
+    http_listener_name         = "listener-private-001"
+    backend_address_pool_name  = "pool-app-service"
+    backend_http_settings_name = "backendsetting-001"
+    priority                   = 20
+  }
+
+  url_path_map {
+    name                               = "rule-public-001"
+    default_backend_address_pool_name  = "pool-app-service"
+    default_backend_http_settings_name = "backendsetting-001"
+
+    path_rule {
+      name                       = "log_files"
+      backend_address_pool_name  = "pool-app-service"
+      backend_http_settings_name = "backendsetting-001"
+      paths = [
+        "/log*",
+      ]
+      firewall_policy_id = resource.azurerm_web_application_firewall_policy.uri.id
+    }
+  }
+
+
+  // =========== Misc ===========
 
   ssl_policy {
     policy_type = "Predefined"
