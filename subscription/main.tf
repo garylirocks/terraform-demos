@@ -16,14 +16,17 @@ variable "sub_id" {
   type = string
 }
 
+# We need "ID" field in the Portal, not the "Name" field (which is actually "displayName")
 variable "billing_account_name" {
   type = string
 }
 
+# We need "ID" field in the Portal, not the "Name" field (which is actually "displayName")
 variable "billing_profile_name" {
   type = string
 }
 
+# We need "ID" field in the Portal, not the "Name" field (which is actually "displayName")
 variable "invoice_section_name" {
   type = string
 }
