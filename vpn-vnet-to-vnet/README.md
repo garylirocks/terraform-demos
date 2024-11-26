@@ -6,8 +6,8 @@ Adapted from https://github.com/Azure/terraform/blob/master/quickstart/301-hub-s
 
 - Two vNets
 - One VPN gateway in each vNet
-  - We are using the "VNet-to-VNet" type connection, not the "Site-to-Site" type
 - One public IP for each VPN gateway
+- "VNet-to-VNet" type connection (does not need local network gateway resources)
 
 
 ## Testing
