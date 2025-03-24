@@ -1,0 +1,3 @@
+subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+create_bastion = true
