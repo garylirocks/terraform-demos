@@ -30,7 +30,7 @@ resource "azurerm_virtual_machine" "vm-demo" {
   storage_image_reference {
     offer     = "WindowsServer"
     publisher = "MicrosoftWindowsServer"
-    sku       = "2019-Datacenter"
+    sku       = "2022-datacenter-azure-edition-smalldisk"
     version   = "latest"
   }
 
