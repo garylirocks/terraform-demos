@@ -7,14 +7,13 @@ resource "azurerm_public_ip" "pip-demo" {
 }
 
 resource "azurerm_network_interface" "nic-demo" {
-  name                 = "nic-demo"
-  location             = azurerm_resource_group.demo.location
-  resource_group_name  = azurerm_resource_group.demo.name
-  enable_ip_forwarding = false
+  name                = "nic-demo"
+  location            = azurerm_resource_group.demo.location
+  resource_group_name = azurerm_resource_group.demo.name
 
   ip_configuration {
     name                          = "ip-001"
-    private_ip_address            = "10.0.0.8"
+    private_ip_address            = "10.1.1.8"
     private_ip_address_allocation = "Static"
     subnet_id                     = azurerm_subnet.subnet-default.id
     public_ip_address_id          = azurerm_public_ip.pip-demo.id
