@@ -1,14 +1,14 @@
-data "azurerm_log_analytics_workspace" "demo" {
-  name                = "log-test-001"
-  resource_group_name = "rg-common"
-}
+# data "azurerm_log_analytics_workspace" "demo" {
+#   name                = "log-test-001"
+#   resource_group_name = "rg-common"
+# }
 
 resource "azurerm_container_app_environment" "demo" {
-  name                       = "cae-test-001"
-  location                   = azurerm_resource_group.demo.location
-  resource_group_name        = azurerm_resource_group.demo.name
-  logs_destination           = "log-analytics"
-  log_analytics_workspace_id = data.azurerm_log_analytics_workspace.demo.id
+  name                = "cae-test-001"
+  location            = azurerm_resource_group.demo.location
+  resource_group_name = azurerm_resource_group.demo.name
+  # logs_destination           = "log-analytics"
+  # log_analytics_workspace_id = data.azurerm_log_analytics_workspace.demo.id
 }
 
 resource "azurerm_container_app_environment_storage" "logs" {

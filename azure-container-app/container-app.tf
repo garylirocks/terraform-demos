@@ -21,17 +21,22 @@ resource "azurerm_container_app" "demo" {
   template {
     container {
       name   = "simple-hello-world-container"
-      image  = "docker.io/garylirocks/node-express-hello:v1"
+      image  = "docker.io/garylirocks/node-express-hello:${local.image_tag}"
       cpu    = 0.25
       memory = "0.5Gi"
 
       dynamic "env" {
-        for_each = local.datadog_env_vars
+        for_each = local.all_env_vars
 
         content {
           name        = env.key
           secret_name = env.value
         }
+      }
+
+      volume_mounts {
+        name = "logs"
+        path = "/LogFiles"
       }
     }
 
@@ -42,12 +47,17 @@ resource "azurerm_container_app" "demo" {
     #   memory = "0.5Gi"
 
     #   dynamic "env" {
-    #     for_each = local.datadog_env_vars
+    #     for_each = local.all_env_vars
 
     #     content {
     #       name        = env.key
     #       secret_name = env.value
     #     }
+    #   }
+
+    #   volume_mounts {
+    #     name = "logs"
+    #     path = "/LogFiles"
     #   }
     # }
 

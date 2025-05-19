@@ -1,1 +1,2 @@
 subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+datadog_api_key = "xxxxx"
