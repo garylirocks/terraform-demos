@@ -26,7 +26,7 @@ resource "azurerm_container_app" "demo" {
       memory = "0.5Gi"
 
       dynamic "env" {
-        for_each = local.all_env_vars
+        for_each = local.app_env_vars
 
         content {
           name        = env.key
@@ -35,36 +35,41 @@ resource "azurerm_container_app" "demo" {
       }
 
       volume_mounts {
-        name = "logs"
+        name = "logs-ephemeral"
         path = "/LogFiles"
       }
     }
 
-    # container {
-    #   name   = "datadog"
-    #   image  = "docker.io/datadog/serverless-init:latest"
-    #   cpu    = 0.25
-    #   memory = "0.5Gi"
+    container {
+      name   = "datadog"
+      image  = "docker.io/datadog/serverless-init:latest"
+      cpu    = 0.25
+      memory = "0.5Gi"
 
-    #   dynamic "env" {
-    #     for_each = local.all_env_vars
+      dynamic "env" {
+        for_each = local.sidecar_env_vars
 
-    #     content {
-    #       name        = env.key
-    #       secret_name = env.value
-    #     }
-    #   }
+        content {
+          name        = env.key
+          secret_name = env.value
+        }
+      }
 
-    #   volume_mounts {
-    #     name = "logs"
-    #     path = "/LogFiles"
-    #   }
+      volume_mounts {
+        name = "logs-ephemeral"
+        path = "/LogFiles"
+      }
+    }
+
+    # volume {
+    #   name         = "logs"
+    #   storage_name = "cae-test-001-storage-logs"
+    #   storage_type = "AzureFile"
     # }
 
     volume {
-      name         = "logs"
-      storage_name = "cae-test-001-storage-logs"
-      storage_type = "AzureFile"
+      name         = "logs-ephemeral"
+      storage_type = "EmptyDir" // "Ephemeral" in the Portal
     }
   }
 
