@@ -58,9 +58,10 @@ After this, you local user/password becomes domain admin user/password
 ### Add client VM to AD domain
 
 - Set vNet DNS to the private IP of DC (`10.1.0.4`), so it can resolve `guisheng.li`
-  - The DNS server has already been configured using Azure Provided DNS (`168.63.129.16`) as forwarders
+  - The DNS server has already been configured using Azure Provided DNS (`168.63.129.16`) as forwarders (seems done automatically)
+- Restart the VM so the DNS settings take effect
 - Somehow the `Add-Computer` commands fails, GUI works
-  - Click on "Workgroup" in Server Manager, to add this machine to the `guisheng.li` domain
+  - Go to "Local Server" -> "Workgroup" in Server Manager, change this VM to be a member of the `guisheng.li` domain
   - Restart the VM
 
 ### Add user account
