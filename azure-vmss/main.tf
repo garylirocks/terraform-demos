@@ -17,6 +17,11 @@ variable "admin_password" {
   sensitive   = true
 }
 
+resource "azurerm_resource_group" "main" {
+  name     = "rg-vmss-01"
+  location = "australiaeast"
+}
+
 resource "azurerm_linux_virtual_machine_scale_set" "res-0" {
   admin_password                                    = var.admin_password
   admin_username                                    = "localroot"
@@ -36,10 +41,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "res-0" {
   provision_vm_agent                                = true
   resilient_vm_creation_enabled                     = false
   resilient_vm_deletion_enabled                     = false
-  resource_group_name                               = "rg-vmss-02"
+  resource_group_name                               = azurerm_resource_group.main.name
   secure_boot_enabled                               = false
   single_placement_group                            = false
-  sku                                               = "Standard_DS2_v2"
+  sku                                               = "Standard_D2ds_v5"
   tags                                              = {}
   upgrade_mode                                      = "Manual"
   vtpm_enabled                                      = false
@@ -53,7 +58,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "res-0" {
     enable_accelerated_networking = true
     enable_ip_forwarding          = false
     name                          = "vnet-australiaeast-nic01"
-    network_security_group_id     = "/subscriptions/70256be7-d155-4702-8976-0e7f9a046876/resourceGroups/rg-vmss/providers/Microsoft.Network/networkSecurityGroups/basicNsgvnet-australiaeast-nic01"
+    network_security_group_id     = azurerm_network_security_group.main.id
     primary                       = true
     ip_configuration {
       application_gateway_backend_address_pool_ids = []
@@ -62,19 +67,19 @@ resource "azurerm_linux_virtual_machine_scale_set" "res-0" {
       load_balancer_inbound_nat_rules_ids          = []
       name                                         = "vnet-australiaeast-nic01-defaultIpConfiguration"
       primary                                      = true
-      subnet_id                                    = "/subscriptions/70256be7-d155-4702-8976-0e7f9a046876/resourceGroups/rg-vmss/providers/Microsoft.Network/virtualNetworks/vnet-australiaeast/subnets/snet-australiaeast-1"
+      subnet_id                                    = azurerm_subnet.main.id
       version                                      = "IPv4"
     }
   }
   os_disk {
     caching                   = "ReadOnly"
-    disk_size_gb              = 128
+    disk_size_gb              = 75
     storage_account_type      = "Standard_LRS"
     write_accelerator_enabled = false
 
     diff_disk_settings {
       option    = "Local"
-      placement = "CacheDisk"
+      placement = "ResourceDisk" // Standard_D2ds_v6 requires 'NvmeDisk' here, not supported by this proveider yet
     }
 
   }
@@ -88,9 +93,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "res-0" {
     rule                   = "Default"
   }
   source_image_reference {
-    offer     = "0001-com-ubuntu-server-focal"
+    offer     = "ubuntu-24_04-lts"
     publisher = "canonical"
-    sku       = "20_04-lts"
+    sku       = "server"
     version   = "latest"
   }
 }
